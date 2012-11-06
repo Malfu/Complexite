@@ -12,7 +12,7 @@ void construire_sat(FILE * graph)
 				int nbsommet = atoi(&chaine[0]);
 				int nbarrete = atoi(&chaine[2]);
 				
-				fprintf(result, "p cnf %d %d \n", 3*nbsommet, nbsommet+3*nbsommet+nbarrete);
+				fprintf(result, "p cnf %d %d \n", 3*nbsommet, nbsommet+3*nbsommet+3*nbarrete);
 				//initialisation termine
 				int i;
 				for(i=1;i<=nbsommet;++i)//P1 et P2
@@ -26,7 +26,7 @@ void construire_sat(FILE * graph)
 						fprintf(result,"%d %d %d 0 \n", var1, var2, var3);
 						fprintf(result,"%d %d 0 \n", negvar1, negvar2);
 						fprintf(result,"%d %d 0 \n", negvar1, negvar3);
-						fprintf(result,"%d %d 0 \n", negvar1, negvar3);
+						fprintf(result,"%d %d 0 \n", negvar2, negvar3);
 				}
 				while(fgets(chaine, 10, graph) != NULL)//P3
 				{
