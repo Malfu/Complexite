@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <limits.h>
-#include<string.h>
+#include <string.h>
 
 
 void construire_sat(FILE* graph, FILE* result)
@@ -20,7 +20,7 @@ void construire_sat(FILE* graph, FILE* result)
 	}
 
 	int adj[nbsommet][nbsommet];
-	//initialisation matrice
+	/* initialisation matrice */
 	for(i=0; i<nbsommet;++i)
 	{
 		for(j=0;j<nbsommet;++j)
@@ -28,23 +28,23 @@ void construire_sat(FILE* graph, FILE* result)
 			adj[i][j] = INT_MIN;
 		}
 	}
-	//remplissage de la matrice
+	/* remplissage de la matrice */
 	for(;!feof(graph);)
 	{
 		fscanf(graph, "%d %d", &source, &destination);
 		int i;
 		for(i=0; i<nbsommet;++i)
 		{
-			if(destination == adj[i][0])//match de la destination, ajout de la source a la liste des sources
+			if(destination == adj[i][0])/* match de la destination, ajout de la source a la liste des sources */
 			{
 				for(j=1;j<nbsommet;++j)
 				{
-					if(adj[i][j] == source) break;//elimination des redondances
-					if(adj[i][j] == INT_MIN) adj[i][j] = source; // ajout de la source a la liste des sources pour une destination
+					if(adj[i][j] == source) break;/* elimination des redondances */
+					if(adj[i][j] == INT_MIN) adj[i][j] = source; /* ajout de la source a la liste des sources pour une destination */
 				}
 				continue;
 			}
-			else if (adj[i][0] == INT_MIN)//nouvelle source
+			else if (adj[i][0] == INT_MIN)/* nouvelle source */
 			{
 				++nbdestination;
 				adj[i][0] = destination;
@@ -54,12 +54,12 @@ void construire_sat(FILE* graph, FILE* result)
 		}
 	}
 	
-	//fin remplissage
+	/* fin remplissage */
 	fprintf(result, "p cnf %d %d \n", nbsommet, nbarc + nbdestination);
 	for(i=0;i<nbsommet;++i)
 	{
 		if(adj[i][0] == INT_MIN) break;
-		char clause[1024];// si il y a plus d'arc fuck yourself
+		char clause[1024];/* si il y a plus d'arc fuck yourself */
 		char buf[30]; 
 		sprintf(buf,"%d",adj[i][0]);
 		strcat(clause,buf);
@@ -68,11 +68,11 @@ void construire_sat(FILE* graph, FILE* result)
 			if(adj[i][j] == INT_MIN) break;
 			sprintf(buf," %d",adj[i][j]);
 			strcat(clause,buf);
-			fprintf(result,"%d %d 0 \n", -adj[i][0], -adj[i][j]);//P1
+			fprintf(result,"%d %d 0 \n", -adj[i][0], -adj[i][j]);/* P1 */
 		}
 		sprintf(buf," %d \n",0);
 		strcat(clause,buf);
-		fprintf(result,"%s",clause);//P2
+		fprintf(result,"%s",clause);/* P2 */
 	}
 	
 }
