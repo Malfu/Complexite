@@ -40,22 +40,10 @@ static void construire_sat(FILE * graph, FILE * result)
   }
 
   i = 2;
-  if(feof(graph)){
-      fprintf(stderr, "Cannot read line %d\n", i);
-      exit(1);
-  }
-
-  if(2 != (l = fscanf(graph, "%d %d", &sommet1, &sommet2))){
-      fprintf(stderr, "Cannot read line %d\n", i);
-      exit(1);
-  }
-
   for(;!feof(graph);) /* P3 */
   {
-    if(l != 2){
-      fprintf(stderr, "Cannot read line %d\n", i);
-      exit(1);
-    }
+	l = fscanf(graph, "%d %d", &sommet1, &sommet2);
+
 
     negvar1 = -(10 * sommet1 + 1);
     negvar2 = -(10 * sommet1 + 2);
@@ -69,8 +57,13 @@ static void construire_sat(FILE * graph, FILE * result)
     fprintf(result,"%d %d 0 \n", negvar2, negvar22);
     fprintf(result,"%d %d 0 \n", negvar3, negvar33);
 
-    ++i;
-    l = fscanf(graph, "%d %d", &sommet1, &sommet2);
+
+		if(l != 2){
+      fprintf(stderr, "Cannot read line %d\n", i);
+      exit(1);
+    }
+	    ++i;
+    
   }
 }
 
