@@ -1,6 +1,8 @@
 #include <assert.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 extern char * __progname;
 
@@ -77,8 +79,9 @@ int main(int argc, char ** argv)
 {
   FILE* graphe = NULL;
   FILE* output = NULL;
+  struct stat st;
 
-  if(argc == 3){
+  if(argc == 4){
     graphe = fopen(argv[1], "r");
     output = fopen(argv[2], "w");
 
@@ -89,6 +92,18 @@ int main(int argc, char ** argv)
         construire_sat(graphe, output);
         fclose(graphe);
         fclose(output);
+        if (stat(argv[3], &st) == -1 && errno == ENOENT)
+        {
+          fprintf(stderr, "Cannot launch minisat\n");
+          return 1;
+        }
+        else
+        {
+          if(-1 == execl(argv[3], argv[3], argv[2], NULL)){
+            fprintf(stderr, "Cannot launch minisat\n");
+            return 1;
+          }
+        }
       }
       else
       {
@@ -102,7 +117,7 @@ int main(int argc, char ** argv)
       return 1;
     }
   }else{
-    fprintf(stderr, "usage: %s <Input graph> <Output Dimacs file>\n", __progname);
+    fprintf(stderr, "usage: %s <Input graph> <Output Dimacs file> <Minisat executable path>\n", __progname);
     return 1;
   }
 
