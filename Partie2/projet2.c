@@ -7,7 +7,9 @@
 #include <string.h>
 
 
-void construire_sat(FILE* graph, FILE* result)
+extern char * __progname;
+
+static void construire_sat(FILE* graph, FILE* result)
 {
 	int nbsommet, nbarc;
 	int source, destination;
@@ -31,7 +33,7 @@ void construire_sat(FILE* graph, FILE* result)
 	/* remplissage de la matrice */
 	for(;!feof(graph);)
 	{
-		fscanf(graph, "%d %d", &source, &destination);
+		(void)fscanf(graph, "%d %d", &source, &destination);
 		int i;
 		for(i=0; i<nbsommet;++i)
 		{
@@ -61,8 +63,11 @@ void construire_sat(FILE* graph, FILE* result)
 		if(adj[i][0] == INT_MIN) break;
 		char clause[1024];/* si il y a plus d'arc fuck yourself */
 		char buf[30]; 
+    bzero(clause);
+    bzero(buf);
 		sprintf(buf,"%d",adj[i][0]);
 		strcat(clause,buf);
+
 		for(j=1;j<nbsommet;++j)
 		{
 			if(adj[i][j] == INT_MIN) break;
@@ -77,19 +82,24 @@ void construire_sat(FILE* graph, FILE* result)
 	
 }
 
-int main(int arc, char ** argv)
+int main(int argc, char ** argv)
 {
 	
 	FILE* graphe = NULL;
 	FILE* output = NULL;
+
+  if(argc != 3){
+    fprintf(stderr, "usage: %s <Input graph> <Output file>\n", __progname);
+    return 1;
+  }
 	
 	graphe = fopen(argv[1], "r");
-    output = fopen(argv[2], "w");
+  output = fopen(argv[2], "w");
 	
 	construire_sat(graphe, output);
     
 	fclose(graphe);
-    fclose(output);
+  fclose(output);
 	
 	return 0;
 }
